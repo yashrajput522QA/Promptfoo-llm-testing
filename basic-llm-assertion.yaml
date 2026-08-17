@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=https://promptfoo.dev/config-schema.json
+
+# Learn more about building a configuration: https://promptfoo.dev/docs/configuration/guide
+
+description: "My eval, llm testing framework"
+
+prompts:
+  - "Write a tweet about {{topic}}"
+  - "Write a concise, funny tweet about {{topic}}"
+  
+
+providers:
+  #- google:gemini-3.1-pro-preview
+  #- google:gemini-3.6-flash
+  - google:gemini-3.5-flash-lite
+  #- google:gemini-1.5-flash
+  # - google:gemini-2.5-pro
+  
+
+tests:
+  - vars:
+      topic: bananas
+  - vars:
+      topic: avocado toast
+    assert:
+      # For more information on assertions, see https://promptfoo.dev/docs/configuration/expected-outputs
+
+      # Make sure output contains the word "avocado"
+      
+      - type: icontains
+        value: Avocado
+
+      # Prefer shorter outputs
+      - type: javascript
+        value: 1 / (output.length + 1)
+
+  # llm-rubric is not working even after costum consurrency request due to the free model limit. 
+  # - vars:
+  #     topic: new york city
+  #   assert:
+  #     # For more information on model-graded evals, see https://promptfoo.dev/docs/configuration/expected-outputs/model-graded
+  #     - type: llm-rubric
+  #       value: ensure that the output is funny
+  #       provider: google:gemini-2.0-flash
+  #       evaluateOptions:
+  #       maxConcurrency: 1  # Runs 1 request at a time (no parallel calls)
+  #       delay: 4000
+

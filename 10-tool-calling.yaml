@@ -1,0 +1,78 @@
+# =============================================================
+# 10. TOOL CALLING (FUNCTION CALLING) TEST
+# =============================================================
+# Tests whether the LLM correctly decides to call a tool,
+# selects the right tool, and passes the correct arguments.
+#
+# Run:  npx promptfoo eval -c 10-tool-calling.yaml
+# =============================================================
+
+description: "Basic Tool / Function Calling Verification"
+
+providers:
+  - id: groq:llama-3.3-70b-versatile
+    config:
+      temperature: 0
+      # 1. Define the tools available to the LLM here
+      tools:
+        - type: function
+          function:
+            name: get_current_weather
+            description: Get the current weather in a given location
+            parameters:
+              type: object
+              properties:
+                location:
+                  type: string
+                  description: The city and state, e.g. Paris, France
+                unit:
+                  type: string
+                  enum: [celsius, fahrenheit]
+              required: ["location"]
+
+prompts:
+  - |
+    You are a helpful assistant. You have access to tools. 
+    Use them if necessary to answer the user's question.
+
+    ### User Question:
+    {{query}}
+
+defaultTest:
+  options:
+    provider: groq:llama-3.3-70b-versatile
+
+tests:
+  - description: "User asks for weather -> LLM must call 'get_current_weather' with correct city"
+    vars:
+      query: "What is the weather like in Gurgaon today?"
+    assert:
+      # In Promptfoo, tool calls are exposed in `output` as a JavaScript Array
+      - type: javascript
+        value: |
+          try {
+            const calls = output; // Promptfoo parses the array for us
+            
+            if (!Array.isArray(calls)) return false;
+            
+            // Check if ANY of the tools called was the weather tool for Gurgaon
+            const calledWeatherForGurgaon = calls.some(toolCall => {
+                if (toolCall.function.name !== 'get_current_weather') return false;
+                const args = JSON.parse(toolCall.function.arguments);
+                return args.location.toLowerCase().includes('gurgaon');
+            });
+
+            return calledWeatherForGurgaon;
+          } catch (e) {
+            return false;
+          }
+
+  - description: "User asks normal question -> LLM should NOT call a tool"
+    vars:
+      query: "What is the capital of France?"
+    assert:
+      - type: javascript
+        value: |
+          // If the output is an Array of tools, this will fail. 
+          // If it's normal text (a string), it passes.
+          return typeof output === 'string';

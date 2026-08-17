@@ -1,0 +1,52 @@
+# =============================================================
+# 3. ACCURACY (Category: Evaluation)
+# =============================================================
+# Tests whether the LLM gives factually correct answers
+# for straightforward factual, mathematical, and historical
+# questions.
+#
+# Run:  npx promptfoo eval -c 03-accuracy.yaml
+# View: npx promptfoo view
+# =============================================================
+
+description: "Accuracy – Evaluation"
+
+providers:
+  - id: groq:llama-3.3-70b-versatile
+    config:
+      temperature: 0
+
+prompts:
+  - |
+    You are a helpful assistant. Answer the question accurately.
+
+    ### Question:
+    {{query}}
+
+defaultTest:
+  options:
+    provider: groq:llama-3.3-70b-versatile
+
+tests:
+  - description: "Factual — capital of Japan"
+    vars:
+      query: "What is the capital of Japan?"
+    assert:
+      - type: icontains
+        value: "Tokyo"
+      - type: factuality
+        value: "The capital of Japan is Tokyo."
+
+  - description: "Math — percentage calculation"
+    vars:
+      query: "What is 15% of 200?"
+    assert:
+      - type: icontains
+        value: "30"
+
+  - description: "Historical — end of World War II"
+    vars:
+      query: "In what year did World War II end?"
+    assert:
+      - type: icontains
+        value: "1945"

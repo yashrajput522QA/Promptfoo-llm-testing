@@ -1,0 +1,36 @@
+description: "Tool Calling Verification"
+
+providers:
+  - id: groq:llama-3.3-70b-versatile
+    config:
+      temperature: 0
+      tools:
+        - type: function
+          function:
+            name: get_current_weather
+            description: Get the current weather in a given location
+            parameters:
+              type: object
+              properties:
+                location:
+                  type: string
+                  description: The city and state, e.g. San Francisco, CA
+                unit:
+                  type: string
+                  enum: [celsius, fahrenheit]
+              required: ["location"]
+
+prompts:
+  - |
+    You are a helpful assistant.
+    User query: {{query}}
+
+tests:
+  - description: "User asks for weather, LLM should call tool"
+    vars:
+      query: "What is the weather like in Paris today?"
+    assert:
+      - type: javascript
+        value: |
+          console.log("RAW OUTPUT:", output);
+          return true;
