@@ -28,23 +28,9 @@ jobs:
           PROMPTFOO_DISABLE_UPDATE: 1
           PROMPTFOO_DISABLE_TELEMETRY: 1
         run: |
-          echo "Running 01-basic-llm-assertion.yaml"
-          npx promptfoo eval -c evaluations/01-basic-llm-assertion.yaml
-          
-          echo "Running 02-multiple-assertions.yaml"
-          npx promptfoo eval -c evaluations/02-multiple-assertions.yaml
-          
-          echo "Running 06-hallucination.yaml"
-          npx promptfoo eval -c evaluations/06-hallucination.yaml
-          
-          echo "Running 07-prompt-injection.yaml"
-          npx promptfoo eval -c evaluations/07-prompt-injection.yaml
-          
-          echo "Running 08-jailbreak.yaml"
-          npx promptfoo eval -c evaluations/08-jailbreak.yaml
-          
-          echo "Running 09-csv-inputs.yaml"
-          npx promptfoo eval -c evaluations/09-csv-inputs.yaml
-          
-          echo "Running 10-tool-calling.yaml"
-          npx promptfoo eval -c evaluations/10-tool-calling.yaml
+          for file in evaluations/*.yaml; do
+            echo "========================================="
+            echo "Running evaluation: $file"
+            echo "========================================="
+            npx promptfoo eval -c "$file"
+          done

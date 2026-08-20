@@ -1,0 +1,53 @@
+# =============================================================
+# 5. CONSISTENCY (Category: Evaluation)
+# =============================================================
+# Tests whether the LLM gives the same correct answer when
+# the same question is asked multiple times or rephrased.
+#
+# Run:  npx promptfoo eval -c 05-consistency.yaml
+# View: npx promptfoo view
+# =============================================================
+
+description: "Consistency – Evaluation"
+
+providers:
+  - id: groq:llama-3.3-70b-versatile
+    config:
+      temperature: 0
+
+prompts:
+  - |
+    You are a helpful assistant. Answer the question accurately.
+
+    ### Question:
+    {{query}}
+
+defaultTest:
+  options:
+    provider: groq:llama-3.3-70b-versatile
+
+tests:
+  - description: "Run 1 — boiling point of water"
+    vars:
+      query: "What is the boiling point of water at sea level in Celsius?"
+    assert:
+      - type: icontains
+        value: "100"
+
+  - description: "Run 2 — same question, answer must still be 100"
+    vars:
+      query: "What is the boiling point of water at sea level in Celsius?"
+    assert:
+      - type: icontains
+        value: "100"
+
+  - description: "Rephrased — same answer expected"
+    vars:
+      query: "At what temperature in Celsius does water start boiling at sea level?"
+    assert:
+      - type: icontains
+        value: "100"
+      - type: llm-rubric
+        value: >
+          The answer should convey the same meaning as
+          "Water boils at 100 degrees Celsius at sea level."

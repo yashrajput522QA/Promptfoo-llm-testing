@@ -1,0 +1,70 @@
+# =============================================================
+# 4. COMPLETENESS (Category: Evaluation)
+# =============================================================
+# Tests whether the LLM covers ALL parts of a multi-part
+# question and provides examples when asked.
+#
+# Run:  npx promptfoo eval -c 04-completeness.yaml
+# View: npx promptfoo view
+# =============================================================
+
+description: "Completeness – Evaluation"
+
+providers:
+  - id: groq:llama-3.3-70b-versatile
+    config:
+      temperature: 0
+
+prompts:
+  - |
+    You are a helpful assistant. Answer the question fully and completely.
+
+    ### Question:
+    {{query}}
+
+defaultTest:
+  options:
+    provider: groq:llama-3.3-70b-versatile
+
+tests:
+  - description: "Multi-part — three benefits of exercise"
+    vars:
+      query: >
+        Explain three benefits of exercise: one for physical health,
+        one for mental health, and one for social well-being.
+    assert:
+      - type: llm-rubric
+        value: >
+          The response must address ALL THREE aspects:
+          1) A physical health benefit
+          2) A mental health benefit
+          3) A social well-being benefit.
+          Missing any one is a failure.
+      - type: javascript
+        value: |
+          const lower = output.toLowerCase();
+          const hasPhysical = lower.includes('physical') || lower.includes('body') ||
+                              lower.includes('heart') || lower.includes('weight');
+          const hasMental   = lower.includes('mental') || lower.includes('stress') ||
+                              lower.includes('mood') || lower.includes('anxiety');
+          const hasSocial   = lower.includes('social') || lower.includes('community') ||
+                              lower.includes('friend') || lower.includes('team');
+          return hasPhysical && hasMental && hasSocial;
+
+  - description: "Explanation with example — recursion"
+    vars:
+      query: "What is recursion in programming? Provide an example."
+    assert:
+      - type: llm-rubric
+        value: >
+          The response must explain what recursion is AND provide
+          at least one code example or pseudocode.
+      - type: javascript
+        value: |
+          const lower = output.toLowerCase();
+          const hasExplanation = lower.includes('calls itself') ||
+                                 lower.includes('call itself') ||
+                                 lower.includes('recursive');
+          const hasCode = lower.includes('def ') || lower.includes('function') ||
+                          lower.includes('void ');
+          return hasExplanation && hasCode;
