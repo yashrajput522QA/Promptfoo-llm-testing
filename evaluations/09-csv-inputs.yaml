@@ -10,7 +10,7 @@
 description: "run test and quaries that are fetch from a CSV file"
 
 providers:
-  - id: groq:llama-3.3-70b-versatile
+  - id: groq:qwen/qwen3.6-27b
     config:
       temperature: 0
 
@@ -23,7 +23,7 @@ prompts:
 
 defaultTest:
   options:
-    provider: groq:llama-3.3-70b-versatile
+    provider: groq:qwen/qwen3.6-27b
   assert:
     # This assertion dynamically checks if the output contains 
     # whatever is in the 'expected' column of the CSV row

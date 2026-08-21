@@ -23,7 +23,7 @@ description: >
 # PROVIDERS – using Groq
 # ---------------------------------------------------------------------------
 providers:
-  - id: groq:llama-3.3-70b-versatile
+  - id: groq:qwen/qwen3.6-27b
     label: Groq-Llama-3.3-70B
     config:
       temperature: 0          # deterministic for reproducibility
@@ -51,7 +51,7 @@ defaultTest:
   options:
     # THIS IS THE KEY FIX: tells all model-graded assertions to use Groq
     # instead of defaulting to OpenAI/Google (which cause timeouts)
-    provider: groq:llama-3.3-70b-versatile
+    provider: groq:qwen/qwen3.6-27b
   assert:
     - type: latency
       threshold: 30000           # 30s threshold (Groq can be slower on grading)

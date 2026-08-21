@@ -11,7 +11,7 @@
 description: "Completeness – Evaluation"
 
 providers:
-  - id: groq:llama-3.3-70b-versatile
+  - id: groq:qwen/qwen3.6-27b
     config:
       temperature: 0
 
@@ -24,7 +24,7 @@ prompts:
 
 defaultTest:
   options:
-    provider: groq:llama-3.3-70b-versatile
+    provider: groq:qwen/qwen3.6-27b
 
 tests:
   - description: "Multi-part — three benefits of exercise"

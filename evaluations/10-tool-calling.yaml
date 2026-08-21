@@ -10,7 +10,7 @@
 description: "Basic Tool / Function Calling Verification"
 
 providers:
-  - id: groq:llama-3.3-70b-versatile
+  - id: groq:qwen/qwen3.6-27b
     config:
       temperature: 0
       # 1. Define the tools available to the LLM here
@@ -40,7 +40,7 @@ prompts:
 
 defaultTest:
   options:
-    provider: groq:llama-3.3-70b-versatile
+    provider: groq:qwen/qwen3.6-27b
 
 tests:
   - description: "User asks for weather -> LLM must call 'get_current_weather' with correct city"
